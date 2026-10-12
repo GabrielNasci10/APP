@@ -1,0 +1,21 @@
+#!/bin/bash
+# Abre a Stoa. O Stoa.app tem de ficar na mesma pasta que o index.html.
+# Com o Google Chrome instalado, abre numa janela própria (sem barra de endereços).
+# Muda para 0 para abrir sempre no browser predefinido (por exemplo, o Safari).
+USAR_JANELA_CHROME=1
+
+APP="$(cd "$(dirname "$0")/../.." && pwd)"
+DIR="$(dirname "$APP")"
+HTML="$DIR/index.html"
+
+if [ ! -f "$HTML" ]; then
+  osascript -e 'display alert "Stoa" message "Não encontrei o index.html. Mantém o Stoa.app na mesma pasta que o index.html." as critical'
+  exit 1
+fi
+
+if [ "$USAR_JANELA_CHROME" = "1" ] && { [ -d "/Applications/Google Chrome.app" ] || [ -d "$HOME/Applications/Google Chrome.app" ]; }; then
+  URL="file://$(printf '%s' "$HTML" | sed -e 's/%/%25/g' -e 's/ /%20/g' -e 's/#/%23/g' -e 's/?/%3F/g')"
+  open -na "Google Chrome" --args --app="$URL"
+else
+  open "$HTML"
+fi
